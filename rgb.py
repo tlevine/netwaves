@@ -21,11 +21,10 @@ def sink(columns, rows, wav_pointer, ppm_pointer):
     except GeneratorExit:
         l = [127] * (columns * rows - count)
         for pointer in pointers:
-            print(l)
             pointer.write(bytes(l))
             pointer.flush()
 
-s = sink(800, 600, open('sink.wav', 'wb+'), open('sink.ppm', 'wb+'))
+s = sink(800, 600, open('sink.wav', 'wb'), open('sink.ppm', 'wb'))
 next(s)
 s.send(0)
 s.send([127,255])
