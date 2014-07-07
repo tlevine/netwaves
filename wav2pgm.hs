@@ -4,7 +4,7 @@ import           Data.ByteString.Lazy.Char8   (pack)
 import qualified Data.ByteString.Lazy         as B
  
 header :: Int -> Int -> B.ByteString
-header columns rows = pack $ unlines ["P6","32 40","255"]
+header columns rows = pack $ unlines ["P5","32 40","255"]
 
 remainder :: Int -> Int -> B.ByteString
 remainder columns fileLength = pack $ replicate (fileLength `mod` columns) '\NUL'
