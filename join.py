@@ -22,8 +22,8 @@ def join(ppm_fn, wav_fn, out_fn):
     SCALE = 10
     ppm_fp = open(ppm_fn, 'rb')
     wav_fp = BytesIO()
-    for line in ppm_fp.readlines(3):
-        wav_fp.write(line)
+    for _ in range(3):
+        wav_fp.write(ppm_fp.readline())
     ppm_fp.seek(0)
     for line in open(wav_fn, 'rb'):
         wav_fp.write(line)
