@@ -6,7 +6,7 @@ setup(name='netwaves',
       description='Record microphone to wav and netbpm.',
       url='https://github.com/tlevine/netwaves',
       install_requires = [
-          'alsaaudio',
+#         'alsaaudio',
       ],
       scripts = [
           'netwaves.py',
