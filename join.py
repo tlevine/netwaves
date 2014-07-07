@@ -10,9 +10,10 @@ def parser():
 def main():
     p = parser().parse_args()
 
-def new_image_size(wav_length, ppm_dimensions):
+def new_image_size(wav_length, ppm_dimensions, scale):
     columns, rows = ppm_dimensions
-    wav_length / (columns * rows)
+    scale = (wav_length / (columns * rows) / scale) ** 0.5
+    return round(columns * scale), round(rows * scale)
 
 def join(ppm, wav, out):
     i = Image.open(ppm)
