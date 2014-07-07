@@ -3,13 +3,13 @@ from distutils.core import setup
 setup(name='netwaves',
       author='Thomas Levine',
       author_email='_@thomaslevine.com',
-      description='Search for data tables.',
+      description='Record microphone to wav and netbpm.',
       url='https://github.com/tlevine/netwaves',
-      py_modules=['netwaves'],
       install_requires = [
+          'alsaaudio',
       ],
       scripts = [
-          'netwaves',
+          'netwaves.py',
       ],
       tests_require = ['nose'],
       version='0.0.1',
