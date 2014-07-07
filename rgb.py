@@ -4,7 +4,7 @@ import itertools
 def sink(columns, rows, wav_pointer, ppm_pointer):
     try:
         pointers = [ppm_pointer, wav_pointer]
-        header_str = 'P6\n%d %d255\n' % (columns, rows)
+        header_str = 'P6\n%d %d\n255\n' % (columns, rows)
         header = header_str.encode('ascii')
         ppm_pointer.write(header)
         count = 0
@@ -19,7 +19,7 @@ def sink(columns, rows, wav_pointer, ppm_pointer):
                 pointer.flush()
             count += len(result)
     except GeneratorExit:
-        l = [127] * (columns * rows - count)
+        l = [127] * (columns * rows * 3 - count)
         for pointer in pointers:
             pointer.write(bytes(l))
             pointer.flush()
