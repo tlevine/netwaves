@@ -3,14 +3,10 @@ import itertools
 from io import BytesIO
 
 import alsaaudio, audioop
-from PIL import Image
 
-def show_image(pointer):
-    Image.open(BytesIO(mem_pointer.getvalue())).show()
-
-def sink(columns, rows, wav_pointer, ppm_pointer, memory_pointer = BytesIO()):
+def sink(columns, rows, wav_pointer, ppm_pointer):
     try:
-        pointers = [ppm_pointer, wav_pointer, memory_pointer]
+        pointers = [ppm_pointer, wav_pointer]
         header_str = 'P6\n%d %d\n255\n' % (columns, rows)
         header = header_str.encode('ascii')
         ppm_pointer.write(header)
@@ -41,7 +37,7 @@ def microphone():
 
 def main():
     try:
-        s = sink(800, 600, open('sink.wav', 'wb'), open('sink.ppm', 'wb'))
+        s = sink(400, 300, open('sink.wav', 'wb'), open('sink.ppm', 'wb'))
         next(s)
         mic = microphone()
         while True:
@@ -52,4 +48,7 @@ def main():
         s.close()
         raise
 
-main()
+if __name__ == '__main__':
+    import os
+    os.system('sleep 1s && feh -D 1 sink.ppm sink.ppm&')
+    main()
