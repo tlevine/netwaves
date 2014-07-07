@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
+from time import sleep
+from threading import Thread
 import operator
 import argparse
 import itertools
 from io import BytesIO
+
+from getch import Getch
 
 def sink(columns, rows, wav_pointer, ppm_pointer):
     try:
@@ -35,22 +39,31 @@ def update_color(color, key):
     else:
         return
 
-    new_subcolor = f(color[key.lower()], 1)
+    new_subcolor = f(color[key.lower()], 8)
     if new_subcolor >= 0 and new_subcolor <= 255:
         color[key.lower()] = new_subcolor
 
-def work_color(stdin, color):
-    while True:
-        update_color(color, stdin.read(1))
+def work_color(state, color):
+    import sys
+    g = Getch()
+    while state['running']:
+        key = g()
+        if key == 'q':
+            state['running'] = False
+        else:
+            update_color(color, key)
 
-def pipe(stdin, columns, rows, basename):
+def pipe(columns, rows, basename):
     try:
         s = sink(columns, rows, open('%s.wav' % basename, 'wb'), open('%s.ppm' % basename, 'wb'))
         next(s)
-        color = {'r':127,'g':127,'b':127}
-        Thread(None, target = update_color, args = (stdin, color)).start()
-        while True:
+        color = {'r':127 - 80,'g':127,'b':127}
+        state = {'running': True}
+        Thread(None, target = work_color, args = (state, color,)).start()
+        while state['running']:
             s.send([color['r'], color['g'], color['b']])
+            sleep(0.0001)
+        s.close()
     except KeyboardInterrupt:
         s.close()
         raise
@@ -59,16 +72,16 @@ def parser():
     p = argparse.ArgumentParser('Record sound as PPM.')
     p.add_argument('basename',
         help = 'Output will be written to $basename{wav,ppm}.')
-    p.add_argument('-c', '--columns', type = int, default = 320,
+    p.add_argument('-c', '--columns', type = int, default = 800,
         help = 'Number of columns in the image')
-    p.add_argument('-r', '--rows', type = int, default = 180,
+    p.add_argument('-r', '--rows', type = int, default = 450,
         help = 'Number of rows in the image')
     return p
 
 def main():
     p = parser().parse_args()
-    import os
-    os.system('sleep 1s && feh -FZ -D 0.1 %s.ppm %s.ppm &' % (p.basename, p.basename))
+    import os, sys
+    os.system('sleep 1s && feh -D 0.1 %s.ppm %s.ppm &' % (p.basename, p.basename))
     pipe(p.columns, p.rows, p.basename)
 
 if __name__ == '__main__':
