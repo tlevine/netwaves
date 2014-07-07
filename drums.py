@@ -30,22 +30,12 @@ def press(frequency, amplitude, nframes):
             yield from atom
 
 def song():
-    bpm = 60
-    framerate = 8000
-    def beats(nbeats):
-        'Return a number of frames'
-        seconds = nbeats * bpm * 60
-        return round(framerate / seconds)
-    return itertools.chain(
-        press(220, 30, beats(1)),
-        press(None, 0, beats(1)),
-        press(220, 30, beats(1)),
-        press(None, 0, beats(1)),
-        press(220, 30, beats(1)),
-        press(None, 0, beats(1)),
-        press(220, 30, beats(1)),
-        press(None, 0, beats(1)),
-    )
+    phrase = list(itertools.chain(
+        press(220, 30,  400),
+        press(None, 0, 1600),
+    ))
+    for copy in itertools.repeat(phrase, 16):
+        yield from copy
 
 def main():
     columns, rows, filename = 800, 600, '/tmp/z.ppm'
