@@ -50,5 +50,5 @@ def main():
 
 if __name__ == '__main__':
     import os
-    os.system('sleep 1s && feh -D 1 sink.ppm sink.ppm&')
+    os.system('sleep 1s && feh -FZ -D 1 sink.ppm sink.ppm&')
     main()
