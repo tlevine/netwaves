@@ -19,25 +19,25 @@ def sink(columns, rows, fp):
 #       fp.write(remainder)
 #       fp.close()
 
-def press(frequency, amplitude, nframes):
+def press(offset, frequency, amplitude, nframes):
     bottom = -amplitude
     top = amplitude
     if frequency == None or amplitude == 0:
         for _ in range(nframes):
-            yield 0
+            yield 0 + offset
     else:
         step = round(frequency / amplitude / 2)
         atom = list(range(bottom, top, step))
         for _ in range(0,round(nframes / len(atom))):
-            yield from atom
+            for a in atom:
+                yield a + offset
 
 def song():
     def drums(freq, offset):
-        f = lambda x: x + offset
-        return map(f, itertools.chain(
-             press(freq, 30,  400),
-             press(None, 0, 1600),
-        ))
+        return itertools.chain(
+             press(offset, freq, 30,  400),
+             press(offset, None, 0, 1600),
+        )
     return itertools.chain(
         drums(220, 0),
         drums(220, 20),
