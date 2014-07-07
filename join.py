@@ -3,16 +3,21 @@ from PIL import Image
 
 def parser():
     p = argparse.ArgumentParser('Record sound as PPM.')
-    p.add_argument('ppm', metavar = '[ppm file]', type = argparse.FileType('rb'))
-    p.add_argument('wav', metavar = '[wav file]', type = argparse.FileType('rb'))
+    p.add_argument('ppm', metavar = '[ppm file]')
+    p.add_argument('wav', metavar = '[wav file]')
     return p
 
 def main():
     p = parser().parse_args()
 
+def new_image_size(wav_length, ppm_dimensions):
+    columns, rows = ppm_dimensions
+    wav_length / (columns * rows)
+
 def join(ppm, wav, out):
     i = Image.open(ppm)
     i.size
+    new_image_size(os.path.getsize(wav), i.size)
 
     magicnumber = ppm.readline()
     dimensions = ppm.readline()
@@ -23,4 +28,4 @@ def join(ppm, wav, out):
     columns, rows = map(int,dimensions.decode('ascii').split(' '))
     print(columns, rows)
 
-join(open('augustin.ppm', 'rb'), open('fms.wav', 'rb'), open('out.ppm', 'wb'))
+# join(open('augustin.ppm', 'rb'), open('fms.wav', 'rb'), open('out.ppm', 'wb'))
