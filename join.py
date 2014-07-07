@@ -26,16 +26,20 @@ def join(ppm_fn, wav_fn, out_fn):
     wav_fp.write(ppm_fp.readline()) # magic number
     columns, rows = map(int, ppm_fp.readline().decode('ascii').split(' '))
     wav_size = os.path.getsize(wav_fn)
-    adj = (wav_size / (columns * rows)) ** 0.5
-    new_columns = ceil(columns / adj)
-    new_rows = ceil(rows / adj)
-    dimensions = ('%d %d\n' % (new_columns, new_rows)).encode('ascii')
+    dimensions = ('%d %d\n' % (columns, rows)).encode('ascii')
     wav_fp.write(dimensions)
     wav_fp.write(ppm_fp.readline()) # max color
+    header_length = wav_fp.tell()
+    print(header_length)
     ppm_fp.seek(0)
-    for line in open(wav_fn, 'rb'):
-        wav_fp.write(line)
-    remainder = (new_columns * new_rows - len(wav_fp.getvalue()))
+    print('--')
+    wav_bytes = open(wav_fn, 'rb').read()
+    print('--')
+   #wav_fp.write(bytes(itertools.chain(*[[b] * 3 for b in wav_bytes])))
+    wav_fp.write(wav_bytes)
+    print('--')
+    remainder = (columns * rows * 3 - header_length - len(wav_fp.getvalue()))
+    remainder += 34
     print(remainder)
     print(len(wav_fp.getvalue()))
     wav_fp.write(bytes([127] * remainder))
