@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+import operator
 import itertools
+import functools
 
 def sink(columns, rows, fp):
     try:
@@ -14,8 +16,8 @@ def sink(columns, rows, fp):
             written += 1
     except GeneratorExit:
         remainder = bytes([127] * (length - written))
-       #fp.write(remainder)
-       #fp.close()
+#       fp.write(remainder)
+#       fp.close()
 
 def press(frequency, amplitude, nframes):
     bottom = -amplitude
@@ -30,19 +32,25 @@ def press(frequency, amplitude, nframes):
             yield from atom
 
 def song():
-    phrase = list(itertools.chain(
-        press(220, 30,  400),
+    drums = lambda freq: list(itertools.chain(
+        press(freq, 30,  400),
         press(None, 0, 1600),
     ))
-    for copy in itertools.repeat(phrase, 16):
-        yield from copy
+    phrase = lambda atom: functools.reduce(operator.add, itertools.repeat(atom, 8))
+    return itertools.chain(
+        phrase(drums(220)),
+        phrase(drums(180)),
+        phrase(drums(220)),
+        phrase(drums(180)),
+    )
 
 def main():
-    columns, rows, filename = 800, 600, '/tmp/z.ppm'
+    columns, rows, filename = 400, 300, '/tmp/z.ppm'
     with open(filename, 'wb') as fp:
         s = sink(columns, rows, fp)
         next(s)
         for frame in song():
             s.send(frame + 127)
+        s.close()
 
 main()
