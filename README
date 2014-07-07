@@ -5,3 +5,9 @@ Install feh and pyalsaaudio. Then run this. ::
 Then run this.
 
     netwaves.py
+
+
+Separate the color field from the sound field.
+That should make this easier.
+
+And move the python stuff to haskell.
