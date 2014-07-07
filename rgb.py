@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import itertools
 from io import BytesIO
 
@@ -35,9 +36,9 @@ def microphone():
     inp.setperiodsize(160)
     return inp
 
-def main():
+def pipe(columns, rows, basename):
     try:
-        s = sink(400, 300, open('sink.wav', 'wb'), open('sink.ppm', 'wb'))
+        s = sink(columns, rows, open('%s.wav' % basename, 'wb'), open('%s.ppm' % basename, 'wb'))
         next(s)
         mic = microphone()
         while True:
@@ -48,7 +49,21 @@ def main():
         s.close()
         raise
 
-if __name__ == '__main__':
+def parser():
+    p = argparse.ArgumentParser('Record sound as PPM.')
+    p.add_argument('basename',
+        help = 'Output will be written to $basename{wav,ppm}.')
+    p.add_argument('-c', '--columns', type = int, default = 320,
+        help = 'Number of columns in the image')
+    p.add_argument('-r', '--rows', type = int, default = 180,
+        help = 'Number of rows in the image')
+    return p
+
+def main():
+    p = parser().parse_args()
     import os
-    os.system('sleep 1s && feh -FZ -D 1 sink.ppm sink.ppm&')
+    os.system('sleep 1s && feh -FZ -D 0.1 %s.ppm %s.ppm &' % (p.basename, p.basename))
+    pipe(p.columns, p.rows, p.basename)
+
+if __name__ == '__main__':
     main()
