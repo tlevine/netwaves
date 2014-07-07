@@ -32,24 +32,33 @@ def press(frequency, amplitude, nframes):
             yield from atom
 
 def song():
-    drums = lambda freq: list(itertools.chain(
-        press(freq, 30,  400),
-        press(None, 0, 1600),
-    ))
-    phrase = lambda atom: functools.reduce(operator.add, itertools.repeat(atom, 8))
+    def drums(freq, offset):
+        f = lambda x: x + offset
+        return map(f, itertools.chain(
+             press(freq, 30,  400),
+             press(None, 0, 1600),
+        ))
     return itertools.chain(
-        phrase(drums(220)),
-        phrase(drums(180)),
-        phrase(drums(220)),
-        phrase(drums(180)),
-        map(lambda x: x + 10, phrase(drums(220))),
-        map(lambda x: x + 10, phrase(drums(180))),
-        map(lambda x: x + 10, phrase(drums(220))),
-        map(lambda x: x + 10, phrase(drums(180))),
+        drums(220, 0),
+        drums(220, 20),
+        drums(220, 0),
+        drums(220, 20),
+        drums(220, 0),
+        drums(220, 20),
+        drums(220, 0),
+        drums(220, 20),
+        drums(180, 0),
+        drums(180, 20),
+        drums(180, 0),
+        drums(180, 20),
+        drums(180, 0),
+        drums(180, 20),
+        drums(180, 0),
+        drums(180, 20),
     )
 
 def main():
-    columns, rows, filename = 400, 300, '/tmp/z.ppm'
+    columns, rows, filename = 400, 400, '/tmp/z.ppm'
     with open(filename, 'wb') as fp:
         s = sink(columns, rows, fp)
         next(s)
