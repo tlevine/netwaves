@@ -12,7 +12,7 @@ setup(name='netwaves',
           'netwaves.py',
       ],
       tests_require = ['nose'],
-      version='0.0.1',
+      version='0.0.2',
       license='AGPL',
       classifiers=[
           'Programming Language :: Python :: 3.4',
