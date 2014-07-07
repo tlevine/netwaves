@@ -39,7 +39,7 @@ def join(ppm_fn, wav_fn, out_fn):
     wav_fp.write(wav_bytes)
     print('--')
     remainder = (columns * rows * 3 - header_length - len(wav_fp.getvalue()))
-    remainder += 34
+    remainder += 34 # why !????
     print(remainder)
     print(len(wav_fp.getvalue()))
     wav_fp.write(bytes([127] * remainder))
