@@ -9,9 +9,18 @@ def parser():
 
 def main():
     p = parser().parse_args()
-    Image.open(p.ppm)
 
 def join(ppm, wav, out):
+    i = Image.open(ppm)
+    i.size
 
-def test():
-    
+    magicnumber = ppm.readline()
+    dimensions = ppm.readline()
+    maxcolor = ppm.readline()
+    out.write(magicnumber)
+    out.write(dimensions)
+    out.write(maxcolor)
+    columns, rows = map(int,dimensions.decode('ascii').split(' '))
+    print(columns, rows)
+
+join(open('augustin.ppm', 'rb'), open('fms.wav', 'rb'), open('out.ppm', 'wb'))
