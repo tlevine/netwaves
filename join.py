@@ -49,6 +49,6 @@ def join(ppm_fn, wav_fn, out_fn):
 
     ppm = Image.open(ppm_fp)
     wav = Image.open(wav_fp)
-    Image.blend(ppm, wav, 0.8).save(out_fn)
+    Image.blend(ppm, wav, 0.2).save(out_fn)
 
 join('augustin.ppm', 'fms.wav', 'out.ppm')
