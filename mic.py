@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import operator
 import argparse
 import itertools
 from io import BytesIO
+
+import alsaaudio, audioop
 
 def sink(columns, rows, wav_pointer, ppm_pointer):
     try:
@@ -27,30 +28,23 @@ def sink(columns, rows, wav_pointer, ppm_pointer):
             pointer.write(bytes(l))
             pointer.flush()
 
-def update_color(color, key):
-    if key in 'rgb':
-        f = operator.sub
-    elif key in 'RGB':
-        f = operator.add
-    else:
-        return
+def microphone():
+    inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE,alsaaudio.PCM_NONBLOCK)
+    inp.setchannels(1)
+    inp.setrate(8000)
+    inp.setformat(alsaaudio.PCM_FORMAT_S8)
+    inp.setperiodsize(160)
+    return inp
 
-    new_subcolor = f(color[key.lower()], 1)
-    if new_subcolor >= 0 and new_subcolor <= 255:
-        color[key.lower()] = new_subcolor
-
-def work_color(stdin, color):
-    while True:
-        update_color(color, stdin.read(1))
-
-def pipe(stdin, columns, rows, basename):
+def pipe(columns, rows, basename):
     try:
         s = sink(columns, rows, open('%s.wav' % basename, 'wb'), open('%s.ppm' % basename, 'wb'))
         next(s)
-        color = {'r':127,'g':127,'b':127}
-        Thread(None, target = update_color, args = (stdin, color)).start()
+        mic = microphone()
         while True:
-            s.send([color['r'], color['g'], color['b']])
+            l, data = mic.read()
+            if l:
+                s.send(data[1:])
     except KeyboardInterrupt:
         s.close()
         raise
