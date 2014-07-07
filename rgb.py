@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import itertools
 
+import alsaaudio, time, audioop
+
 def sink(columns, rows, wav_pointer, ppm_pointer):
     try:
         pointers = [ppm_pointer, wav_pointer]
@@ -24,7 +26,25 @@ def sink(columns, rows, wav_pointer, ppm_pointer):
             pointer.write(bytes(l))
             pointer.flush()
 
-s = sink(800, 600, open('sink.wav', 'wb'), open('sink.ppm', 'wb'))
-next(s)
-s.send(0)
-s.send([127,255])
+def microphone():
+    inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE,alsaaudio.PCM_NONBLOCK)
+    inp.setchannels(1)
+    inp.setrate(8000)
+    inp.setformat(alsaaudio.PCM_FORMAT_S8)
+    inp.setperiodsize(160)
+    return inp
+
+def main():
+    try:
+        s = sink(800, 600, open('sink.wav', 'wb'), open('sink.ppm', 'wb'))
+        next(s)
+        mic = microphone()
+        while True:
+            l, data = mic.read()
+            if l:
+                s.send(data[1:])
+    except KeyboardInterrupt:
+        s.close()
+        raise
+
+main()
