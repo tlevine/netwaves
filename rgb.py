@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
 import itertools
+from io import BytesIO
 
-import alsaaudio, time, audioop
+import alsaaudio, audioop
+from PIL import Image
 
-def sink(columns, rows, wav_pointer, ppm_pointer):
+def show_image(pointer):
+    Image.open(BytesIO(mem_pointer.getvalue())).show()
+
+def sink(columns, rows, wav_pointer, ppm_pointer, memory_pointer = BytesIO()):
     try:
-        pointers = [ppm_pointer, wav_pointer]
+        pointers = [ppm_pointer, wav_pointer, memory_pointer]
         header_str = 'P6\n%d %d\n255\n' % (columns, rows)
         header = header_str.encode('ascii')
         ppm_pointer.write(header)
         count = 0
-        while True:
+        for i in itertools.count(0, 1):
             for pointer in pointers:
                 raw = (yield)
                 if isinstance(raw, int):
