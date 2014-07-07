@@ -42,6 +42,10 @@ def song():
         phrase(drums(180)),
         phrase(drums(220)),
         phrase(drums(180)),
+        map(lambda x: x + 10, phrase(drums(220))),
+        map(lambda x: x + 10, phrase(drums(180))),
+        map(lambda x: x + 10, phrase(drums(220))),
+        map(lambda x: x + 10, phrase(drums(180))),
     )
 
 def main():
