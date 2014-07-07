@@ -20,37 +20,16 @@ def new_image_size(wav_length, ppm_dimensions, scale):
 
 def join(ppm_fn, wav_fn, out_fn):
     SCALE = 10
-    original_image = Image.open(ppm_fn)
-    intermediate_ppm = BytesIO()
-    wav = open(wav_fn, 'rb')
-    out = open(out_fn, 'wb')
+    ppm_fp = open(ppm_fn, 'rb')
+    wav_fp = BytesIO()
+    for line in ppm_fp.readlines(3):
+        wav_fp.write(line)
+    ppm_fp.seek(0)
+    for line in open(wav_fn, 'rb'):
+        wav_fp.write(line)
+    wav_fp.seek(0)
 
-    size = new_image_size(os.path.getsize(wav_fn), original_image.size, SCALE)
-    columns, rows = size
-    original_image.resize(size)
-    original_image.save(intermediate_ppm, format = 'ppm')
-
-    intermediate_ppm.seek(0)
-    magicnumber = intermediate_ppm.readline()
-    dimensions = intermediate_ppm.readline()
-    maxcolor = intermediate_ppm.readline()
-    out.write(magicnumber)
-    out.write(dimensions)
-    out.write(maxcolor)
-    intermediate_ppm.seek(0)
-
-    while True:
-        half = lambda x: round(x / 2)
-        image_row = list(map(half, intermediate_ppm.read(columns)))
-        if len(image_row) < columns:
-            break
-
-        audio_row = itertools.chain(*[[half(ord(wav.read(1)))] * SCALE for _ in range(round(columns/SCALE))])
-        print(image_row, audio_row)
-
-        # Adjust them, and write it a few times
-        # out.write(bytes([a + b for a, b in zip(image_row, audio_row)] * SCALE))
-        # out.write(bytes([a + b for a, b in zip(image_row, audio_row)]))
-        out.write(bytes(image_row))
+    ppm = Image.open(ppm_fp)
+    wav = Image.open(wav_fp)
 
 join('augustin.ppm', 'fms.wav', 'out.ppm')
