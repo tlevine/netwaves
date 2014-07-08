@@ -5,20 +5,6 @@ import os
 from io import BytesIO
 from PIL import Image
 
-def parser():
-    p = argparse.ArgumentParser('Record sound as PPM.')
-    p.add_argument('ppm', metavar = '[ppm file]')
-    p.add_argument('wav', metavar = '[wav file]')
-    return p
-
-def main():
-    p = parser().parse_args()
-
-def new_image_size(wav_length, ppm_dimensions, scale):
-    columns, rows = ppm_dimensions
-    adj = wav_length / (columns * rows)
-    return round(columns * adj ** 0.5 / scale), round(rows * adj ** 0.5 / scale)
-
 def join(ppm_fn, wav_fn, out_fn):
     SCALE = 10
     ppm_fp = open(ppm_fn, 'rb')
