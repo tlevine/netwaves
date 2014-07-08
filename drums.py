@@ -58,7 +58,7 @@ def song():
     )
 
 def main():
-    columns, rows, filename = 400, 400, '/tmp/z.ppm'
+    columns, rows, filename = 400, 400, 'drums.ppm'
     with open(filename, 'wb') as fp:
         s = sink(columns, rows, fp)
         next(s)
