@@ -6,7 +6,6 @@ from io import BytesIO
 from PIL import Image
 
 def join(ppm_fn, wav_fn, out_fn):
-    SCALE = 10
     ppm_fp = open(ppm_fn, 'rb')
     wav_fp = BytesIO()
     wav_fp.write(ppm_fp.readline()) # magic number
