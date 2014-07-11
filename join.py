@@ -17,20 +17,14 @@ def join(ppm_fn, wav_fn, out_fn):
     header_length = wav_fp.tell()
     print(header_length)
     ppm_fp.seek(0)
-    print('--')
     wav_bytes = open(wav_fn, 'rb').read()
-    print('--')
-   #wav_fp.write(bytes(itertools.chain(*[[b] * 3 for b in wav_bytes])))
     wav_fp.write(wav_bytes)
-    print('--')
     remainder = (columns * rows * 3 - header_length - len(wav_fp.getvalue()))
     remainder += 34 # why !????
-    print(remainder)
-    print(len(wav_fp.getvalue()))
     wav_fp.write(bytes([127] * remainder))
     wav_fp.seek(0)
 
-    open('/tmp/a.ppm','wb').write(wav_fp.getvalue())
+    open('%s.ppm' % wav_fn,'wb').write(wav_fp.getvalue())
 
     ppm = Image.open(ppm_fp)
     wav = Image.open(wav_fp)
